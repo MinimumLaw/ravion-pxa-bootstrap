@@ -1,0 +1,46 @@
+  This repositary contents code for initial program loader (bootstrap), placed
+in first sector of NAND Flash Toradex Colibri  PXA320.  This is startup (reset
+vector)  code used for load real bootloader,  like U-Boot.  You may write them
+into NAND flash memory via Toradex Colibri Loader software (via JTAG interface
+only). Please NOT build and upgrade Colibri Modules by any other ways.
+
+  Build instruction for Gentoo users:
+
+- prepare toolchain:
+    # emerge crossdev
+    # crossdev --stabe --target armv5tel-softfloat-linux-gnueabi
+    or
+    # crossdev --stabe --target armv5te-iwmmxt-linux-gnueabi
+- clone bootstrap code and switch to ravion tree
+    # git clone git://github.com/MinimumLaw/ravion-pxa-bootstrap.git
+    # cd ravion-pxa-bootstrap
+    # git checkout obm2-ravion
+  or update existing repsitary clone
+- build bootstrap code
+    # make CROSS_COMPILE=armv5tel-softfloat-linux-gnueabi- PLAT=colibri_pxa320
+    or
+    # make CROSS_COMPILE=armv5te-iwmmxt-linux-gnueabi- PLAT=colibri_pxa320
+    you must copy compiled iplntim.bin - this is ready to use bootstrap code
+- prepare WinCE binary image (require for flashing)
+    Reboot into Microsof Windows
+    Got CreateTBin utility from Toradex support website
+    http://files.toradex.com/Colibri/WinCE/Special/CreateTBin/
+    # CreateTBIN.exe -a 0 -j iplntim.bin
+    you got iplntim_TBin.bin - boostrap code packed into WinCE binary image
+- Flash bootstrap code into Colibri Module
+    Got ColibriLoader from Toradex support website
+    http://files.toradex.com/Colibri/WinCE/ColibriLoader/
+    Flash image into module
+
++-----------------+
+| W A R N I N G ! |
++-----------------+
+1. Module with bad bootstrap code will be bricked!  For unbrick module reflash
+  them with bootstrap code or WinCE bootloader image from  Toradex support web
+  site http://files.toradex.com/Colibri/WinCE/Images/ via JTAG interface.
+2. Module with only bootstrap code in NAND flash will be half-bricked.  Second
+  stage bootloader MUST be flashed into NAND flash on proper address (offset).
+  For unbrick flash U-Boot code (for OAO Radioavionica patches offset 0x60000)
+  with CreateTBIN/ColibriLoader via JTAG or reflash module with WinCE as write
+  in http://files.toradex.com/Colibri/WinCE/ColibriLoader/ColibriLoader.txt
+  Flash bootloader via JTAG and Image via ethernet connection.
