@@ -45,9 +45,11 @@ inline void plat_init(void)
 	writel(GPIO_BASE, 0x614, 0x801);
 
 	/* CPU speed settings */
-	writel(0x41340000, 0x00, 0x028ff21f);
-	asm volatile("mcr p14, 0, %0, c6, c0, 0"::"r"(2));
-	while (((readl(0x41340000, 0x04) >> 28) & 0x3) != 0x3);
+        writel(0x40F40000, 0x00, 0x00002000); /* Clear RDH, set MTS to XN=2 in ASCR */
+        while (((readl(0x40F40000, 0x00) >> 8) & 0x3) != 0x2); /* wait MTS_S bits */
+        writel(0x41340000, 0x00, 0x028fb21f); /* set freq and turbo mult */
+        asm volatile("mcr p14, 0, %0, c6, c0, 0"::"r"(3)); /* change freq + turbo on*/
+        while (((readl(0x41340000, 0x04) >> 28) & 0x3) != 0x3); /* wait PLL for ready*/
 }
 
 void plat_uart_setup(struct uart_config *uart)
@@ -57,8 +59,8 @@ void plat_uart_setup(struct uart_config *uart)
 
 void plat_nand_setup(struct nand_layout *nand)
 {
-	nand->copy_start= 0x20000;
-	nand->copy_size	= 0x40000;
+	nand->copy_start= 0x60000;
+	nand->copy_size	= 0x60000;
 	nand->copy_dest	= 0x5c00a000;
 }
 

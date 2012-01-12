@@ -67,7 +67,7 @@ void obm_start(void)
 	plat_uart_setup(&uart);
 
 	uart_init(&uart);
-	uart_puts(&uart, "\nOpenPXA OBM 2, booting ... ");
+	uart_puts(&uart, "\nOpenPXA OBM2 (Ravion), booting ... ");
 
 	/* Setup DDR DRAM */
 	plat_ddr_setup(&ddr);
