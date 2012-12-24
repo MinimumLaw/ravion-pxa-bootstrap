@@ -59,9 +59,9 @@ void plat_uart_setup(struct uart_config *uart)
 
 void plat_nand_setup(struct nand_layout *nand)
 {
-	nand->copy_start= 0x60000;
-	nand->copy_size	= 0x60000;
-	nand->copy_dest	= 0x5c00a000;
+	nand->copy_start= 0x20000;
+	nand->copy_size	= 0x80000;
+	nand->copy_dest	= 0xa7800000; /* move u-boot top of SDRAM */
 }
 
 void plat_ddr_setup(struct ddr_config *ddr)
